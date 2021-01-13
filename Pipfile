@@ -12,6 +12,7 @@ django = "==2.2.5"
 djangorestframework = "*"
 pipenv-to-requirements = "*"
 awsebcli = "*"
+python-dotenv = "*"
 
 [requires]
 python_version = "3.8"
