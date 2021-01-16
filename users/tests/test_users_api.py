@@ -13,6 +13,10 @@ CREATE_USER_URL = reverse("users:user-list")
 TOKEN_URL = reverse("users:token")
 
 
+def get_retrieve_user_url(pk=0):
+    return reverse("users:user-detail", kwargs={'pk': pk})
+
+
 def create_user(**params):
     return get_user_model().objects.create_user(**params)
 
@@ -105,8 +109,7 @@ class PublicUserApiTest(TestCase):
         """Test that a token is created for the user"""
         payload = {'email': 'test@naver.com',
                    'password': 'testpassword123@',
-                   'name': 'test name'
-                   }
+                   'name': 'test name'}
         create_user(**payload)
         res = self.client.post(TOKEN_URL, payload)
         self.assertIn('token', res.data)
@@ -139,3 +142,46 @@ class PublicUserApiTest(TestCase):
 
         self.assertNotIn('token', res.data)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_retrieve_user_unauthorized(self):
+        """Test that authentication is required for users"""
+        user = create_user(email='test@naver.com',
+                           password='password123',
+                           name='test name')
+        res = self.client.get(get_retrieve_user_url(user.pk))
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class PrivateUserApiTests(TestCase):
+    """Test the users API (private)"""
+
+    def setUp(self):
+        self.user = create_user(email='test@naver.com',
+                                password='password123',
+                                name='test name')
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.user)
+
+    def test_retrieve_profile_success(self):
+        """Test retrieving profile for logged in user"""
+        res = self.client.get(get_retrieve_user_url(self.user.pk))
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            res.data, {'name': self.user.name, 'email': self.user.email}
+        )
+
+    def test_post_retrieve_not_allowed(self):
+        """Test that POST is not allowed on the retrieve url"""
+        res = self.client.post(get_retrieve_user_url(self.user.pk), {})
+        self.assertEqual(res.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def test_update_user_profile(self):
+        """Test updating the user profile for authenticated user"""
+        payload = {'name': 'changed name', 'password': 'password121131@'}
+
+        res = self.client.patch(get_retrieve_user_url(self.user.pk), payload)
+        self.user.refresh_from_db()
+        self.assertEqual(res.data['name'], payload['name'])
+        self.assertTrue(self.user.check_password(payload['password']))
+        self.assertNotIn('password', res.data)
