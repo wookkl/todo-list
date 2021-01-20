@@ -147,7 +147,7 @@ class PrivateWorkApiTest(TestCase):
     def test_full_update_work(self):
         """Test updating a work with put"""
         work = sample_work(user=self.user)
-        url = detail_url(self.user.pk)
+        url = detail_url(work.pk)
         new_date = datetime.strptime('10-27-2020', '%m-%d-%Y').date()
         payload = {'title': 'changed title',
                    'description': 'new description',
@@ -160,3 +160,26 @@ class PrivateWorkApiTest(TestCase):
         self.assertEqual(work.title, payload['title'])
         self.assertEqual(work.description, payload['description'])
         self.assertEqual(work.created_at, payload['created_at'])
+
+    def test_delete_work_success(self):
+        """Test deleting a work succesfully"""
+        work = sample_work(self.user)
+        url = detail_url(work.pk)
+        self.assertEqual(Work.objects.count(), 1)
+
+        res = self.client.delete(url)
+
+        self.assertEqual(Work.objects.count(), 0)
+        self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_delete_work_limited_user(self):
+        """ Test deleting works for user """
+        user2 = get_user_model().objects.create_user(email='anon@naver.com',
+                                                     password='password12@',
+                                                     name='user2 name')
+        work = sample_work(user=user2)
+        url = detail_url(work)
+        res = self.client.delete(url)
+
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(Work.objects.count(), 1)
