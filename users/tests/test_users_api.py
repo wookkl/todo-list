@@ -9,7 +9,7 @@ from rest_framework import status
 from users import models
 
 
-CREATE_USER_URL = reverse("users:user-list")
+CREATE_USER_URL = reverse("users:join")
 TOKEN_URL = reverse("users:token")
 
 
@@ -36,6 +36,8 @@ class ModelTests(TestCase):
             password=password
         )
         self.assertEqual(user.email, email)
+        self.assertFalse(user.is_staff)
+        self.assertFalse(user.is_superuser)
         self.assertTrue(user.check_password(password))
 
     def test_create_new_user_invalid_email(self):
@@ -54,18 +56,17 @@ class ModelTests(TestCase):
         name = "super user"
         superuser = models.User.objects.create_superuser(
             email=email, name=name, password=password)
-
+        self.assertTrue(superuser.is_staff)
         self.assertTrue(superuser.is_superuser)
 
 
 class PublicUserApiTest(TestCase):
-
     """Test the users API (public)"""
 
     def setUp(self):
         self.client = APIClient()
 
-    def test_creat_valid_user_success(self):
+    def test_create_valid_user_success(self):
         """Test creating user valid payload is successful"""
         payload = {
             'email': 'test@naver.com',

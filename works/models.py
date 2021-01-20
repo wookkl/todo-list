@@ -14,7 +14,7 @@ class Work(models.Model):
                              on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateField()
     status = models.CharField(max_length=20,
                               choices=((STATUS_NOT_STARTED, _("Not started")),
                                        (STATUS_IN_PROGRESS, _("In progress")),

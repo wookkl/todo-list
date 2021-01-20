@@ -1,26 +1,27 @@
 from django.contrib.auth import get_user_model
 
-from rest_framework.viewsets import mixins, GenericViewSet
-from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
+from rest_framework.generics import CreateAPIView
 from rest_framework import authentication, permissions
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.viewsets import mixins, GenericViewSet
 
 from users.serializers import UserSerializer, AuthTokenSerializer
 
 
-class UserViewSet(mixins.CreateModelMixin,
-                  mixins.RetrieveModelMixin,
-                  mixins.UpdateModelMixin,
-                  GenericViewSet):
-    """A simple ViewSet for creating or updating or retieving user"""
+class CreateUserView(CreateAPIView):
     serializer_class = UserSerializer
-    authentication_classes = [authentication.TokenAuthentication, ]
     queryset = get_user_model().objects.all()
 
-    def get_permissions(self):
-        if self.action != 'create':
-            self.permission_classes = [permissions.IsAuthenticated]
-        return [permission() for permission in self.permission_classes]
+
+class UserViewSet(mixins.RetrieveModelMixin,
+                  mixins.UpdateModelMixin,
+                  GenericViewSet):
+    """A simple ViewSet for updating or retieving user"""
+    serializer_class = UserSerializer
+    authentication_classes = [authentication.TokenAuthentication, ]
+    permission_classes = [permissions.IsAuthenticated, ]
+    queryset = get_user_model().objects.all()
 
 
 class CreateTokenView(ObtainAuthToken):
