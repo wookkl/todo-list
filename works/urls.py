@@ -6,6 +6,6 @@ from works.views import WorkViewSet
 app_name = "works"
 
 router = DefaultRouter()
-router.register(r'', WorkViewSet, basename='work')
+router.register(r'', WorkViewSet)
 
 urlpatterns = router.urls

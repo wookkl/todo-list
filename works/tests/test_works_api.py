@@ -177,9 +177,17 @@ class PrivateWorkApiTest(TestCase):
         user2 = get_user_model().objects.create_user(email='anon@naver.com',
                                                      password='password12@',
                                                      name='user2 name')
+        user2_client = APIClient()
+        user2_client.force_authenticate(user2)
         work = sample_work(user=user2)
-        url = detail_url(work)
+        url = detail_url(work.pk)
+
         res = self.client.delete(url)
 
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(Work.objects.count(), 1)
+
+        user2_res = user2_client.delete(url)
+
+        self.assertEqual(user2_res.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Work.objects.count(), 0)
