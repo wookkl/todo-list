@@ -15,6 +15,7 @@ awsebcli = "*"
 python-dotenv = "*"
 psycopg2-binary = "*"
 aws-psycopg2 = "*"
+djangorestframework-simplejwt = "*"
 
 [requires]
 python_version = "3.8"

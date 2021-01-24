@@ -10,7 +10,7 @@ from users import models
 
 
 CREATE_USER_URL = reverse("users:join")
-TOKEN_URL = reverse("users:token")
+TOKEN_URL = reverse("token_obtain_pair")
 ME_URL = reverse("users:me")
 
 
@@ -110,7 +110,7 @@ class PublicUserApiTest(TestCase):
                    'name': 'test name'}
         create_user(**payload)
         res = self.client.post(TOKEN_URL, payload)
-        self.assertIn('token', res.data)
+        self.assertIn('access', res.data)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
     def test_create_token_invalid_credentials(self):
@@ -122,23 +122,23 @@ class PublicUserApiTest(TestCase):
         payload = {'email': 'test@naver.com', 'password': 'wrongpw123@'}
         res = self.client.post(TOKEN_URL, payload)
 
-        self.assertNotIn("token", res.data)
-        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertNotIn("access", res.data)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_create_token_not_user(self):
         """Test that token is note created if user doesn't exists"""
         payload = {'email': 'test@naver.com', 'password': 'passwor1d123@'}
         res = self.client.post(TOKEN_URL, payload)
 
-        self.assertNotIn('token', res.data)
-        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertNotIn('access', res.data)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_create_token_missing_field(self):
         """Test that email and password are required"""
         payload = {'email': 'test', 'password': ''}
         res = self.client.post(TOKEN_URL, payload)
 
-        self.assertNotIn('token', res.data)
+        self.assertNotIn('access', res.data)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_retrieve_user_unauthorized(self):
