@@ -1,9 +1,7 @@
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.authentication import JWTAuthentication
 
-
+from core.authentication import CustomJWTAuthentication
 from works.serializers import WorkSerializer
 from works.models import Work
 
@@ -13,7 +11,7 @@ class WorkViewSet(ModelViewSet):
     queryset = Work.objects.all()
     serializer_class = WorkSerializer
     permission_classes = [IsAuthenticated, ]
-    authentication_classes = [JWTAuthentication, ]
+    authentication_classes = [CustomJWTAuthentication, ]
 
     def perform_create(self, serializer):
         """ Create a new recipe """
