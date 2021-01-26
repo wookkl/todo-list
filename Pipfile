@@ -10,11 +10,7 @@ autopep8 = "*"
 [packages]
 django = "==2.2.5"
 djangorestframework = "*"
-pipenv-to-requirements = "*"
-awsebcli = "*"
 python-dotenv = "*"
-psycopg2-binary = "*"
-aws-psycopg2 = "*"
 djangorestframework-simplejwt = "*"
 pyjwt = "*"
 
