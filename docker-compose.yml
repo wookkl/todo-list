@@ -10,3 +10,5 @@ services:
       - ./app:/app
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
+    environment:
+      - DJANGO_SECRET="B6LFuPK#wSsYLnz8%#^Z58tVzg7xtT^7"
