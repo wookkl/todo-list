@@ -23,7 +23,6 @@ class ModelTests(TestCase):
 
     def test_create_new_user_successfully(self):
         """ Test creating a new user """
-
         email = "test@naver.com"
         password = "testpassword123@"
         name = "test name"

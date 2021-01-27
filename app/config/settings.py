@@ -21,10 +21,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("DJANGO_SECRET")
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if bool(os.environ.get("DEBUG")) else False
-
 ALLOWED_HOSTS = ["*"]
 
 # Application definition
@@ -47,7 +45,7 @@ PROJECT_APPS = [
 THIRD_PARTY_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
-    'jwt',
+    'rest_framework_simplejwt',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + THIRD_PARTY_APPS
@@ -95,7 +93,7 @@ if DEBUG:
 else:
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'ENGINE': 'django.db.backends.postgresql',
             'HOST': os.environ.get('DB_HOST'),
             'NAME': os.environ.get('DB_NAME'),
             'USER': os.environ.get('DB_USER'),
