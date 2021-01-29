@@ -135,7 +135,7 @@ class PrivateWorkApiTest(TestCase):
         """Test updating a work with patch """
         work = sample_work(user=self.user)
         payload = {'title': 'changed title', 'description': 'new description'}
-        url = detail_url(self.user.pk)
+        url = detail_url(work.pk)
 
         res = self.client.patch(url, payload)
         work.refresh_from_db()
