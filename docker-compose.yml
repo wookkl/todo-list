@@ -8,8 +8,17 @@ services:
       - ./app:/user/src/app
     ports:
       - 8000:8000
-    env_file:
-      - ./env/.env.dev
+    environment:
+      - DEBUG=1
+      - DJANGO_SECRET=B6LFuPKwSsYLnz8%^Z58tVzg7xtT
+      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+      - DB_ENGINE=django.db.backends.postgresql
+      - DB_DATABASE=todo_list_dev
+      - DB_USER=todo_list
+      - DB_PASSWORD=supersecretpassword
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DATABASE=postgres
     depends_on:
       - db
 
@@ -21,6 +30,5 @@ services:
       - POSTGRES_USER=todo_list
       - POSTGRES_PASSWORD=supersecretpassword
       - POSTGRES_DB=todo_list_dev
-
 volumes:
   postgres_data:
